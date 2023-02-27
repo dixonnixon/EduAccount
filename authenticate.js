@@ -14,6 +14,7 @@ const JwtStrategy = PassportJwt.Strategy;
 import config from "./config.js";
 
 const local = passport.use(new LocalStrategy(User.authenticate()));
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 

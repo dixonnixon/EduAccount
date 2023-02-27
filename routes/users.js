@@ -50,22 +50,25 @@ router
 
   .post('/signup',  cors.configureWithOptions, (req, res, next) => {
     // // console.log("signing UP...");
-    User.register(new User({username: req.body.username}), req.body.password, 
+    User.register(new User({email: req.body.email, username: req.body.username}), req.body.password, 
       (err, user) => {
         // console.log("register", user, (user != null))
         if(err) {
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
-          res.json({err: err})
+          res.json({err: err});
           
         }
         else {
-          if(req.body.nickname) {
-            user.nickname = req.body.nickname;
+          if(req.body.email) {
+            user.email = req.body.email;
           }
-          if(req.body.lastname) {
-            user.lastname = req.body.lastname;
-          }
+
+          if(req.body.username) {
+            user.username = req.body.username;
+          } else {  user.username = "noName"} 
+
+       
           user.save((err, user) => {
             // console.log("after user saved", user);
             if(err) {

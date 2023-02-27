@@ -1,0 +1,8 @@
+
+curl --request POST 'localhost:80/users/signup' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "password":"secret12345",
+    "username": "nickname",
+    "email":"reader@gmail.com"
+}'
