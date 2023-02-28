@@ -3,21 +3,20 @@ import bodyParser from 'body-parser';
 import User from '../models/user.js';
 import passport from "passport";
 import authenticate from "../authenticate.js";
+import UsersMiddleware from '../middleware/users.middleware.js';
+import UsersService from '../services/users.service.js';
+import BodyValidationMiddleware from '../middleware/body.validation.middleware.js';
+
 import cors from './cors.js';
-
-import mongooseService from '../services/mongoose.service.js';
-
-
-
-
 import debug from 'debug';
+
+import { body, param, validationResult } from "express-validator";
 
 const log = debug('app:users-routes-config');
 
 
 var router = express.Router();
 router.use(bodyParser.json());
-
 
 log(cors)
 
@@ -26,7 +25,8 @@ router.options('*', cors.configureWithOptions, (req, res) => { res.sendStatus(20
 
 /* GET users listing. */
 // router.get('/', cors.cors, authenticate.verifyAdmin, function(req, res, next) {
-router.get('/', cors.cors, authenticate.verifyAdmin, function(req, res, next) {
+router
+  .get('/', cors.cors, authenticate.verifyAdmin, function(req, res, next) {
   // res.send('respond with a resource');
   // if(!req.session.user) {
   // if(!req.user) {
@@ -44,10 +44,20 @@ router.get('/', cors.cors, authenticate.verifyAdmin, function(req, res, next) {
     res.json(users);
   })
   .catch((err) => next(err));
-});
+})
+  .post("/", cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,
+    body('email').custom(UsersMiddleware.isValidUser),
+    body('email').isEmail(),
+    body('password')
+        .isLength({ min: 8 })
+        .withMessage('Must include password (5+ characters)')
+        .trim(),
+    BodyValidationMiddleware.verifyBodyFieldsErrors,
+    UsersService.createUser
+  )
+;
 
 router
-
   .post('/signup',  cors.configureWithOptions, (req, res, next) => {
     // // console.log("signing UP...");
     User.register(new User({email: req.body.email, username: req.body.username}), req.body.password, 
@@ -102,8 +112,6 @@ router
   // console.log("login  req", req);
   passport.authenticate('local', (err, user, info) => {
    // console.log("local error auth", err, user, info);
-
-   
    
     if(err) {
       return next(err);
@@ -124,9 +132,10 @@ router
         res.setHeader('Content-Type', 'application/json');
         res.json({success: false,  status: 'You are failed to 10g in!', err: "Could not login User!" });
       }
+      
 
       let token = authenticate.getToken({ _id: req.user._id });
-      // console.log("Login:Post user", req.user);
+      console.log("Login:Post user", req.user);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.json({success: true, token: token, status: 'You are successfully 10gged in!'});
@@ -139,8 +148,9 @@ router
 });
 
 router
-.get('/logout', cors.configureWithOptions, (req, res, next) => {
-  // console.log("Logging out...");
+.get('/logout', authenticate.verifyUser, cors.configureWithOptions, (req, res, next) => {
+  console.log("Logging out...");
+  
 
   if(req.session) {
     req.session.destroy();
@@ -157,14 +167,14 @@ router
   }
 });
 
-router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
-  if (req.user) {
-    var token = authenticate.getToken({_id: req.user._id});
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json({success: true, token: token, status: 'You are successfully logged in!'});
-  }
-});
+// router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
+//   if (req.user) {
+//     var token = authenticate.getToken({_id: req.user._id});
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type', 'application/json');
+//     res.json({success: true, token: token, status: 'You are successfully logged in!'});
+//   }
+// });
 
 router.get('/checkJWTToken', cors.configureWithOptions, (req, res, next) => {
   passport.authenticate('jwt', {session: false}, (err, user, info) => {

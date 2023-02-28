@@ -1,7 +1,7 @@
 import  express from 'express';
 import path  from'path';
 // var logger = require('morgan');
-// import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit'
 
@@ -21,6 +21,8 @@ import usersRoute from './routes/users.js';
 import debug from 'debug';
 const log = debug('app');
 const FileStore = sessionFileStore(session);
+
+
 
 
 import dotenv from 'dotenv';
@@ -64,6 +66,7 @@ app.use(session({
   
 app.disable('x-powered-by')
 app.use(express.json());
+app.use(cookieParser());
 
 
 app.use(limiter);

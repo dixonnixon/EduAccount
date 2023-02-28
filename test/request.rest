@@ -6,3 +6,27 @@ curl --request POST 'localhost:80/users/signup' \
     "username": "nickname",
     "email":"reader@gmail.com"
 }'
+
+
+###
+
+
+curl --request POST 'localhost:80/users/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "password":"secret12345",
+    "username": "nickname"
+}'
+
+curl --request POST 'localhost:80/users' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{
+    "password":"secret12345",
+    "email": "ddd@ddd.com",
+    "username": "nickname"
+}'
+
+
+curl --request GET 'localhost:80/users/logout' \
+--header 'Content-Type: application/json' 
