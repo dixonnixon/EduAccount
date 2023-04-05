@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www"
+    "test": "mocha --recursive --exit  --timeout 10000",
+    "start": "export NODE_ENV=test && node ./bin/www"
   },
   "author": "",
   "license": "ISC",
@@ -30,6 +30,18 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.1.2",
+    "serve-static": "^1.15.0",
     "session-file-store": "^1.5.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "express-winston": "^4.2.0",
+    "faker-js": "^1.0.0",
+    "mocha": "^10.2.0",
+    "mongodb": "^5.1.0",
+    "supertest": "^6.3.3",
+    "winston": "^3.8.2"
   }
 }

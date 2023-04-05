@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import User from '../models/user.js';
+import Workplace from '../models/workplace.js';
 import passport from "passport";
 import authenticate from "../authenticate.js";
 import UsersMiddleware from '../middleware/users.middleware.js';
@@ -113,9 +113,8 @@ router
 // .post("/login", cors.configureWithOptions, passport.authenticate('local'), (req, res, next) => {
 .post("/login", cors.configureWithOptions,  (req, res, next) => {
   // console.log("login  req", req);
-  // console.log("login  req", req, res.headersSent);
   passport.authenticate('local', (err, user, info) => {
-   console.log("local error auth!!!",  user, !user);
+   // console.log("local error auth", err, user, info);
    
     if(err) {
       return next(err);
@@ -132,19 +131,14 @@ router
 
     req.logIn(user, (err) => {
       if(err)  {
-        console.log("login  req1", res.headersSent);
-
         res.statusCode = 401;
         res.setHeader('Content-Type', 'application/json');
-        res.json({success: false,  status: 'You are failed to 10g in!', err: "Could not login User!",
-          reson: err
-        });
-        
+        res.json({success: false,  status: 'You are failed to 10g in!', err: "Could not login User!" });
       }
-      // console.log(req.user);
+      
 
-      let token = authenticate.getToken({ _id: user._id });
-      console.log("Login:Post user", user);
+      let token = authenticate.getToken({ _id: req.user._id });
+      console.log("Login:Post user", req.user);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.json({success: true, token: token, status: 'You are successfully 10gged in!'});

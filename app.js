@@ -1,31 +1,52 @@
 import  express from 'express';
-import path  from'path';
-// var logger = require('morgan');
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit'
-
+import dotenv from 'dotenv';
 // const swaggerUi from 'swagger-ui-express'
 // const swaggerFile from './swagger_output.json'
 import session from 'express-session';
 import sessionFileStore  from 'session-file-store';
 import passport from "passport";
-import config from './config.js';
 import logger from 'morgan';
 import helmet from 'helmet';
+import * as expressWinston from 'express-winston';
+
+import * as winston from 'winston';
+
+
+
+
 
 
 import indexRoute from './routes/index.js';
 import usersRoute from './routes/users.js';
+import addressesRoute from './routes/addresses.js';
 
 import debug from 'debug';
 const log = debug('app');
 const FileStore = sessionFileStore(session);
 
+const loggerOptions = {
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+        winston.format.json(),
+        winston.format.prettyPrint(),
+        winston.format.colorize({ all: true })
+    ),
+};
+
+if (!process.env.DEBUG) {
+    loggerOptions.meta = false; // when not debugging, log requests as one-liners
+    if(typeof global.it === 'function') {
+        loggerOptions.level = 'http'; //4 non-debug tests
+    }
+}
 
 
 
-import dotenv from 'dotenv';
+
+
 const dotenvResult = dotenv.config();
 if (dotenvResult.error) {
     throw dotenvResult.error;
@@ -41,7 +62,27 @@ const limiter = rateLimit({
 });
 
 
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+    if (isNaN(port)) {
+      // named pipe
+      return val;
+    }
+    if (port >= 0) {
+      // port number
+      return port;
+    }
+    return false;
+  }
+
+const port = normalizePort(process.env.PORT || '3000' );
+
+
 const app = express();
+app.set('port', port);
+
+app.use(expressWinston.logger(loggerOptions));
+
 app.all('*', (req, res, next) => {
     console.log(req.secure, 'https://' + req.hostname + ":" + app.get('port') + req.url);
     return next();
@@ -71,6 +112,8 @@ app.use(cookieParser());
 
 app.use(limiter);
 app.use(helmet());
+app.use(express.static('public'));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -79,6 +122,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', indexRoute);
 app.use('/users', usersRoute);
+app.use('/addresses', addressesRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -86,6 +130,7 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
   });
+
 
   
   // error handler

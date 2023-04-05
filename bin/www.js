@@ -8,8 +8,16 @@ import app from '../app.js';
 import debug from 'debug';
 import fs from 'fs';
 import http from 'http';
+import serveStatic from 'serve-static';
+import finalhandler from 'finalhandler';
 // import https from 'https';
+import path  from'path';
+import { fileURLToPath } from 'url';
 
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const log = debug('app:www');
 
@@ -31,7 +39,23 @@ app.set('port', port);
 //   cert: fs.readFileSync(__dirname + '/cert.pem')
 // };
 
+  /**
+   * static
+   */
+  function setHeaders (res, path) {
+    res.setHeader('Content-Disposition', contentDisposition(path))
+  }
 
+  var serve = serveStatic('public/scripts', {
+    index: false,
+    setHeaders: setHeaders
+  })
+  // app.use('/scripts', express.static(path.join(__dirname, 'public/scripts')))
+  // app.use(express.static(path.join(__dirname, 'public', 'css')));
+  app.use('/scripts', serveStatic(path.join(__dirname, 'public')))
+
+  
+  // serve(req, res, finalhandler(req, res)); 
 
 // var server = https.createServer(options, app);
 var server = http.createServer(app);

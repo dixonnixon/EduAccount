@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongooseService from '../services/mongoose.service.js';
 import passportLocalMongoose  from 'passport-local-mongoose';
-let Schema = mongoose.Schema;
+let Schema = mongooseService.getMongoose().Schema;
 
 
 let User = new Schema({
@@ -14,4 +14,4 @@ let User = new Schema({
 
 User.plugin(passportLocalMongoose);
 
-export default mongoose.model("User", User);
+export default mongooseService.getMongoose().model("User", User);

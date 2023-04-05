@@ -1,9 +1,9 @@
 
-curl --request POST 'localhost:80/users/signup' \
+curl --request POST 'localhost:8080/users/signup' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "password":"secret12345",
-    "username": "nickname",
+    "password":"su",
+    "username": "su",
     "email":"reader@gmail.com"
 }'
 
@@ -11,12 +11,20 @@ curl --request POST 'localhost:80/users/signup' \
 ###
 
 
-curl --request POST 'localhost:80/users/login' \
+curl --request POST 'localhost:8080/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "password":"secret12345",
     "username": "nickname"
 }'
+
+curl --request POST 'localhost:8080/users/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "password":"su",
+    "username": "su"
+}'
+
 
 curl --request POST 'localhost:80/users' \
 --header 'Content-Type: application/json' \
@@ -27,6 +35,52 @@ curl --request POST 'localhost:80/users' \
     "username": "nickname"
 }'
 
-
+###
 curl --request GET 'localhost:80/users/logout' \
 --header 'Content-Type: application/json' 
+
+###
+curl --request GET 'localhost:80/users' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--header 'Content-Type: application/json' 
+###
+
+
+
+curl --request POST 'localhost:80/users/addresses' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{
+    "password":"secret12345",
+    "username": "nickname",
+    "email":"reader@gmail.com"
+}'
+
+
+###
+
+curl --request POST 'localhost:80/users/addresses' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+
+
+###
+
+POST http://localhost:8080/users/login HTTP/1.1
+content-type: application/json
+
+{
+    "password":"secret12345",
+    "username": "nickname"
+}
+
+###
+
+curl --request POST 'localhost:8080/addresses' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{ 
+    "city": "Sumy",
+    "street": [{ "name": "Prokofieva", "buildNo": "34" } ],
+    "postIndex": "40016"
+}'
