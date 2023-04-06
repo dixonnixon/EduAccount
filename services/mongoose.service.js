@@ -8,26 +8,27 @@ import findConfig from 'find-config';
 
 
 function getDbName() {
-    dotenv.config({ path: findConfig('.env') })
+    dotenv.config({ path: findConfig('.env') });
     let DbName;
     console.log('*********************************************************\r\n\r\n', process.env.NODE_ENV, process.env.DB_NAME);
 
-    if (process.env.NODE_ENV ==='dev'){
+    if (process.env.NODE_ENV ==='dev') {
         DbName = `${process.env.DB_NAME}`;
     }
-    if (process.env.NODE_ENV ==='test'){
+    if (process.env.NODE_ENV ==='test') {
         DbName = `${process.env.DB_NAME}_test`;
     }
-    if (process.env.NODE_ENV ==='prod'){
+    if (process.env.NODE_ENV ==='prod') {
         DbName = `${process.env.DB_NAME}`;
     }
-    console.log(DbName);
+    console.log("DbName", DbName);
     return DbName;
 }
 
 function getUserName() {
     let userName;
-    console.log('getUserName*********************************************************\r\n\r\n', process.env.DB_NAME);
+    console.log('getUserName*********************************************************\r\n\r\n', process.env.DB_NAME, 
+     process.env.NODE_ENV);
 
     if (process.env.NODE_ENV ==='dev'){
         userName = 'Admin';

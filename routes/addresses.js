@@ -83,13 +83,15 @@ router.route('/')
     })
     
     .post(cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-       
+        const { body } = req;
+        
         console.log(req.user, req.body, req.body.street);
         const addrId = new ObjectId();
        
         const streets =  req.body.street.map((val, idx) => {
             return Object.assign(val, { address: addrId});
         });
+
         let address = new Address({
             street: streets,
             city: req.body.city,
