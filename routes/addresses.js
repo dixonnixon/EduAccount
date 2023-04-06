@@ -7,6 +7,9 @@ import authenticate from "../authenticate.js";
 import UsersMiddleware from '../middleware/users.middleware.js';
 import UsersService from '../services/users.service.js';
 import BodyValidationMiddleware from '../middleware/body.validation.middleware.js';
+import { registerAddressSchema } from '../helpers/validators/address.js';
+import { ValidationError } from 'yup';
+
 
 import cors from './cors.js';
 import debug from 'debug';
@@ -84,9 +87,20 @@ router.route('/')
     
     .post(cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         const { body } = req;
-        
+
         console.log(req.user, req.body, req.body.street);
         const addrId = new ObjectId();
+
+         //---------------------------------vaidate
+        try {
+            const errorVal = registerAddressSchema.validateSync(body, 
+                {abortEarly: false, stripUnknown: true }
+            );
+        } catch (e) {
+            const error = e ;
+            return res.status(422).json({ errors: error.errors });
+        }
+         //---------------------------------vaidate
        
         const streets =  req.body.street.map((val, idx) => {
             return Object.assign(val, { address: addrId});
@@ -99,21 +113,7 @@ router.route('/')
             _id: addrId
         });
         console.log("aaaaa", addrId, streets, address);
-        const error = address.validateSync();
-        // address.street = req.body.street;
-        if(error) {
-            // let err = new Error(JSON.stringify(error.errors));
-            // err.status = 403;
-            // return next(err);
-            res.statusCode = 403;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(JSON.stringify(error.errors));
-            return;
-        }
-
-        // address.save(function(err) {
-        //     console.log(err); // #sadpanda
-        // })
+    
         address.save()
         .then((address) => {
             console.log("Address created", address);

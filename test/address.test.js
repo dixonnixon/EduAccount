@@ -26,20 +26,20 @@ describe('POST: /addresses route to store addresses',  () => {
 
 
     
-    it('should allow a POST to /addresses',  async function () {
+    it('should allow a POST to /addresses with correspord fields',  async function () {
         let token = await login();
         const res =  await request(app).post('/addresses')  
+            .set({ Authorization: `Bearer ${token}` })   
             .send({
-                "username": "nickname", 
-                "password":"secret12345",
-                "email":"reader@gmail.com",
-                "admin": true
+                "postIndex": "40013", 
+                "city":"Sumy",
+                "street": []
             });
 
-        console.log("signup.", token, res.body, res.status);
-        expect(res.status).to.equal(400);
-        expect(res.body.errors[0].msg).to.equal('E-mail already in use');
+        console.log("signup.", res.body, res.status);
+        expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
-        expect(res.body).to.be.an('object');;
+        expect(res.body).to.be.an('object');
+        //Validate objectIdHere
     });
 });

@@ -22,6 +22,9 @@ import * as winston from 'winston';
 import indexRoute from './routes/index.js';
 import usersRoute from './routes/users.js';
 import addressesRoute from './routes/addresses.js';
+import educatorsRoute from './routes/educators.js';
+import itemsRoute from './routes/items.js';
+import workplacesRoute from './routes/workplaces.js';
 
 import debug from 'debug';
 const log = debug('app');
@@ -123,6 +126,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', indexRoute);
 app.use('/users', usersRoute);
 app.use('/addresses', addressesRoute);
+app.use('/educators', educatorsRoute);
+app.use('/items', itemsRoute);
+app.use('/workplaces', workplacesRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -3,12 +3,11 @@ let Schema = mongoose.Schema;
 
 
 let Workplace = new Schema({
-    users: [{
-        type: mongoose.Schema.Types.ObjectId, ref: 'Educator'
-    }],
-    items: [{ type: String }], //FE:
-    wpNo: {type: Number},
-    macaddres: {type: Sting, required: true}
+    // educators: [{
+    //     type: mongoose.Schema.Types.ObjectId, ref: 'Educator'
+    // }],
+    items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }], //FE:
+    wpNo: { type: Number },
 }, { id: false, timestamps: true });
 
 

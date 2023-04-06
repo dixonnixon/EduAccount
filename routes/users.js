@@ -115,7 +115,7 @@ router
   // console.log("login  req", req);
   // console.log("login  req", req, res.headersSent);
   passport.authenticate('local', (err, user, info) => {
-   console.log("local error auth!!!",  user, !user);
+   console.log("method: authenticate",  user, !user);
    
     if(err) {
       return next(err);
