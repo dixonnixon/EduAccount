@@ -37,7 +37,11 @@ router.route('/')
   })
   .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     const { body } = req;
-    body.user = req.user._id;
+    //now if you logged in you Create Educ yourself.
+    //but We should create Educ(Staff) By Admin and assign user to It
+    // body.user = req.user._id;
+    //It should be done later with update
+
     console.log("addr usr", req.user._id);
     //---------------------------------vaidate
     try {
@@ -51,7 +55,7 @@ router.route('/')
     }
      //---------------------------------vaidate
       let educ = new Educator(body);
-      educ.save()
+      educ.collection.insertOne(educ)
       .then((educ) => {
           console.log("educ created", educ);
           res.statusCode = 200;

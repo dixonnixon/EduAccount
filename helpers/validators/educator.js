@@ -13,15 +13,16 @@ export const registerEducatorsSchema = yup
     lastName: yup.string(),
     surName:  yup.string(),
     user: yup.string()
-    .required('id must be a valid ObjectId')
-    .trim()
-    .transform((value) => {
-      if (isValidObjectId(value)) {
-        return value;
-      }
+    // .required('id must be a valid ObjectId')
+    // .trim()
+    // .transform((value) => {
+    //   if (isValidObjectId(value)) {
+    //     return value;
+    //   }
 
-      return '';
-    }),
+    //   return '';
+    // }),
+    ,
     age: yup.number().required().positive().integer(),
     addresses:  yup.array().of(
       yup.object(),
