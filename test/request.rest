@@ -18,7 +18,7 @@ curl --request POST 'localhost:8080/users/login' \
     "username": "nickname"
 }'
 
-curl --request POST 'localhost:8080/users/login' \
+curl --request POST 'localhost:443/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "password":"su",

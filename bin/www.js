@@ -7,7 +7,8 @@
 import app from '../app.js';
 import debug from 'debug';
 import fs from 'fs';
-import http from 'http';
+// import http from 'http'; 
+import https from 'https'; 
 import serveStatic from 'serve-static';
 import finalhandler from 'finalhandler';
 // import https from 'https';
@@ -49,16 +50,21 @@ app.set('port', port);
   var serve = serveStatic('public/scripts', {
     index: false,
     setHeaders: setHeaders
-  })
+  });
+
+  console.log(serve);
   // app.use('/scripts', express.static(path.join(__dirname, 'public/scripts')))
   // app.use(express.static(path.join(__dirname, 'public', 'css')));
-  app.use('/scripts', serveStatic(path.join(__dirname, 'public')))
+  // app.use('/scripts', serveStatic(path.join(__dirname, 'public')))
+  // app.use('/certs', serveStatic(path.join(__dirname, 'public')))
 
   
   // serve(req, res, finalhandler(req, res)); 
 
 // var server = https.createServer(options, app);
-var server = http.createServer(app);
+var server = https.createServer({
+  key: fs.readFileSync("/var/www/domain.key"),
+  cert: fs.readFileSync("/var/www/domain.crt")},app);
 
 /**
  * Listen on provided port, on all network interfaces.

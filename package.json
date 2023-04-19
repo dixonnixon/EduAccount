@@ -43,6 +43,7 @@
     "faker-js": "^1.0.0",
     "mocha": "^10.2.0",
     "mongodb": "^5.1.0",
+    "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "winston": "^3.8.2"
   }
