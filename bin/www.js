@@ -52,7 +52,6 @@ app.set('port', port);
     setHeaders: setHeaders
   });
 
-  console.log(serve);
   // app.use('/scripts', express.static(path.join(__dirname, 'public/scripts')))
   // app.use(express.static(path.join(__dirname, 'public', 'css')));
   // app.use('/scripts', serveStatic(path.join(__dirname, 'public')))
@@ -63,8 +62,8 @@ app.set('port', port);
 
 // var server = https.createServer(options, app);
 var server = https.createServer({
-  key: fs.readFileSync("/var/www/domain.key"),
-  cert: fs.readFileSync("/var/www/domain.crt")},app);
+  key: fs.readFileSync(__dirname + "/cert.key"),
+  cert: fs.readFileSync(__dirname + "/cert.pem")},app);
 
 /**
  * Listen on provided port, on all network interfaces.

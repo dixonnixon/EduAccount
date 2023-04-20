@@ -1,6 +1,7 @@
 
-curl --request POST 'localhost:8080/users/signup' \
+curl --request POST 'https://10.1.0.16:443/users/signup' \
 --header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
 --data-raw '{
     "password":"su",
     "username": "su",

@@ -35,7 +35,7 @@ describe('/educators route should able POST by admin',  () => {
                 age: 34,
             });
 
-        console.log("signup.",  res.body, res.status);
+        console.log("signup.",  token, res.body, res.status);
         expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');
