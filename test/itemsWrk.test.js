@@ -113,9 +113,19 @@ describe('work with items and workplaces',  () => {
         expect(res.body).to.be.an('object');
     });
 
+    
+
     it('Educator should insert Item with KeyValues', async () => {
         console.log("KV", fixWp);
         let token = await loginAdmin();
+
+        // let req = await request(app).post('/items')
+        //     .set({ Authorization: `Bearer ${token}`})
+            
+        //     .send({
+
+        //     });
+
     });
 
     

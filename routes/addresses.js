@@ -38,7 +38,7 @@ router.route('/:addressId')
     })
     .put(cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 
-        Address.findByIdAndUpdate(req.params.dishId, {
+        Address.findByIdAndUpdate(req.params.addressId, {
             $set: req.body
         }, {new: true})
 

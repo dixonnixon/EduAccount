@@ -22,6 +22,15 @@ log(cors);
 
 router.route('/')
   .options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+  //get all workspaces by admin
+  .get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,  async (req, res, next) => {
+    const wss = await Workplace.find({});
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    // res.end('Will send all the dishes to you!');
+
+    res.json(wss);
+  })
   .delete(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Workplace.deleteMany({})
     .then((resp) => {

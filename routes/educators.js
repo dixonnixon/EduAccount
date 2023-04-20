@@ -23,6 +23,24 @@ log(cors)
 
 router.options('*', cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
 
+router.route('/:educatorId')
+.options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+.put(cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    // res.write('Updating the dish: ' + req.params.dishId + '\n');
+    // res.end('Will update the dish: ' + req.body.name + 
+    // ' with details: ' + req.body.description);
+    
+    Educator.findOneAndUpdate({ _id: req.params.educatorId},
+         { user: req.body.user}, {new: true})
+
+    .then((updated) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(updated);
+    });
+})
+
+
 /* GET users listing. */
 // router.get('/', cors.cors, authenticate.verifyAdmin, function(req, res, next) {
 router.route('/')
