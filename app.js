@@ -24,7 +24,9 @@ import usersRoute from './routes/users.js';
 import addressesRoute from './routes/addresses.js';
 import educatorsRoute from './routes/educators.js';
 import itemsRoute from './routes/items.js';
+import categoriesRoute from './routes/categories.js';
 import workplacesRoute from './routes/workplaces.js';
+import propsRoute from './routes/props.js';
 
 import debug from 'debug';
 const log = debug('app');
@@ -81,13 +83,16 @@ function normalizePort(val) {
 const port = normalizePort(process.env.PORT || '3000' );
 
 
+
+
+
 const app = express();
 app.set('port', port);
 
 app.use(expressWinston.logger(loggerOptions));
 
 app.all('*', (req, res, next) => {
-    console.log(req.secure, 'https://' + req.hostname + ":" + app.get('port') + req.url);
+    (req.secure, 'https://' + req.hostname + ":" + app.get('port') + req.url);
     return next();
     // if(req.secure) {
     //   return next();
@@ -127,8 +132,16 @@ app.use('/', indexRoute);
 app.use('/users', usersRoute);
 app.use('/addresses', addressesRoute);
 app.use('/educators', educatorsRoute);
+
+
+
 app.use('/items', itemsRoute);
 app.use('/workplaces', workplacesRoute);
+
+//EAV
+app.use('/properties', propsRoute);
+app.use('/categories', categoriesRoute);
+// app.use('/values', valuesRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -153,5 +166,9 @@ app.use(function(err, req, res, next) {
         error: err
       });
 });
+
+console.log(`ENV: ${app.get('env')}`);
+if(app.get('env') !== 'test') app.use(logger('dev'));
+
   
 export default app;

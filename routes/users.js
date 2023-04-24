@@ -115,7 +115,7 @@ router
   // console.log("login  req", req);
   // console.log("login  req", req, res.headersSent);
   passport.authenticate('local', (err, user, info) => {
-   console.log("method: authenticate",  user, !user);
+  //  console.log("method: authenticate",  user, !user);
    
     if(err) {
       return next(err);
@@ -132,7 +132,7 @@ router
 
     req.logIn(user, (err) => {
       if(err)  {
-        console.log("login  req1", res.headersSent);
+        // console.log("login  req1", req.headers, req.body, res.headersSent, err);
 
         res.statusCode = 401;
         res.setHeader('Content-Type', 'application/json');
@@ -144,7 +144,7 @@ router
       // console.log(req.user);
 
       let token = authenticate.getToken({ _id: user._id });
-      console.log("Login:Post user", user);
+      // console.log("Login:Post user", user);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.json({success: true, token: token, status: 'You are successfully 10gged in!'});

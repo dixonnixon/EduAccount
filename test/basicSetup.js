@@ -2,6 +2,10 @@
 import {dbConnect, dbClose} from '../helpers/dbConnect.js';
 import mongoose from 'mongoose';
 
+import os from 'os';
+
+console.log("os", os.userInfo());
+
 let basicSetup = () => {
     before((done)=> {              // runs before the first test case
         dbConnect()   // connection to the data base

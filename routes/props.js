@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import Item from '../models/item.js';
+import Property from '../models/property.js';
 import authenticate from "../authenticate.js";
 import cors from './cors.js';
 import debug from 'debug';
@@ -24,30 +24,22 @@ router.route('/')
 .options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
   .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     const { body } = req;
-    body.user = req.user._id;
-    console.log("addr usr", req.user._id);
-    //---------------------------------vaidate : TODO later
-    // try {
-    //     const errorVal = registerEducatorsSchema.validateSync(body,
-    //         { abortEarly: false, stripUnknown: true }
-    //     );
-    // } catch (e) {
-    //     const error = e ;
-    //     console.log(e);
-    //     return res.status(422).json({ errors: error.errors });
-    // }
-     //---------------------------------vaidate
-      // let prop = new Property(body);
 
+ 
+      let prop = new Property(body);
 
-      let item = new Item(body);
-      item.save()
-      .then((item) => {
-          console.log("item created", item);
+      prop.save()
+      .then((prop) => {
+          console.log("prop created", prop);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.json(item);
+          res.json(prop);
       }, (err) => next(err));
+  })
+  .delete(cors.cors, authenticate.verifyUser, async (req, res, next) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(await Property.deleteMany());
   })
 ;
 

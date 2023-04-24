@@ -12,11 +12,12 @@ curl --request POST 'https://10.1.0.16:443/users/signup' \
 ###
 
 
-curl --request POST 'localhost:443/users/login' \
+curl --request POST 'https://10.1.0.16:443/users/login' \
+--cacert 'bin/cert.pem' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "password":"secret12345",
-    "username": "nickname"
+    "password":"su",
+    "username": "su"
 }'
 
 curl --request POST 'localhost:443/users/login' \

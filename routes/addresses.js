@@ -75,7 +75,7 @@ router.route('/')
         Address.find(req.query)
             // .populate('comments.author')
         .then((address) => {
-                console.log(address);
+                // console.log(address);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 // res.end('Will send all the dishes to you!');

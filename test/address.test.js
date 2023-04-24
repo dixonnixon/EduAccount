@@ -36,7 +36,6 @@ describe('POST: /addresses route to store addresses',  () => {
                 "street": []
             });
 
-        console.log("signup.", res.body, res.status);
         expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');

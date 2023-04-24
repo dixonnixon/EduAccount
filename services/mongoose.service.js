@@ -3,6 +3,7 @@ import debug from 'debug';
 import * as dotenv from "dotenv";
 import config from '../config.js';
 import findConfig from 'find-config';
+import ServerApi from 'mongodb';
 
 
 
@@ -50,7 +51,8 @@ class MongooseService {
      mongooseOptions = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000
+        serverSelectionTimeoutMS: 5000,
+        serverApi: ServerApi.v1
     };
 
     constructor(dbName) {
@@ -73,7 +75,7 @@ class MongooseService {
             .replace('<usr>', getUserName())
             // .replace('<serverIp>',  'localhost')
             .replace('<dbName>', getDbName() );
-        console.log(constring);
+        // console.log(constring);
         mongoose.set('strictQuery', true);
         mongoose
             .connect(constring, this.mongooseOptions)
