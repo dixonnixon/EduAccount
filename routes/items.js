@@ -49,7 +49,37 @@ router.route('/')
           res.json(item);
       }, (err) => next(err));
   })
+  
 ;
+router.route('/:itemId')
+.options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+.patch(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,  (req, res, next) => {
+  Item.findByIdAndUpdate(req.params.itemId, {
+      $set: req.body
+  }, {new: true})
+  .populate({ path: 'values', select: 'name' })
+  .exec(function(err, item) {
+    // console.log("populate", err, item, item.populated('values'));
+      if (err) {
+          // ...
+          res.json(err);
+      } else {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.json(item);
+      }
+      
+    })
+
+
+ 
+})
+.delete(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,  async (req, res, next) => {
+  // let result = ;
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.json(await Item.deleteOne({ _id: req.params.itemId} ) );
+})
 
 
 export default router;

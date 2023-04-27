@@ -11,10 +11,10 @@ let Value = new Schema({
         type: mongoose.Schema.Types.ObjectId, ref: 'Property'
     },
     value: { type: String }
-}, { _id: false, timestamps: false });
+}, {  timestamps: false });
 
 
-
+// mongoose.model("Value", Value)
 
 let Item = new Schema({
    
@@ -23,9 +23,7 @@ let Item = new Schema({
     workplace: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Workplace'
     }, 
-    values: [{
-        Value
-    }]
+    values:  { type: [ Value ] },
 }, { _id: true, timestamps: false });
 
 export default mongoose.model("Item", Item);  

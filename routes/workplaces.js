@@ -62,5 +62,30 @@ router.route('/')
           res.setHeader('Content-Type', 'application/json');
           res.json(wp);
       }, (err) => next(err));
+  });
+
+
+router.route('/:workplaceId')
+  .options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+  .patch(cors.configureWithOptions,  authenticate.verifyUser, authenticate.verifyAdmin, async (req, res) => { 
+    
+    Workplace.findByIdAndUpdate(req.params.workplaceId, {
+      // $set: req.body
+      $addToSet: req.body
+    }, {new: true})
+    .populate({ path: 'items'})
+    // .populate({ path: 'items', populate: { path: 'values.Value', model: 'Value'} })
+    .exec(function(err, wp) {
+      // console.log("populate", err, item, item.populated('values'));
+        if (err) {
+            // ...
+            res.json(err);
+        } else {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(wp);
+        }
+    })
+    
   })
 export default router;

@@ -92,17 +92,17 @@ app.set('port', port);
 app.use(expressWinston.logger(loggerOptions));
 
 app.all('*', (req, res, next) => {
-    (req.secure, 'https://' + req.hostname + ":" + app.get('port') + req.url);
-    return next();
-    // if(req.secure) {
-    //   return next();
-    // }
-    // else {
-    //   console.log("redirected to: ", 
-    //   'https://' + req.hostname + ":" + app.get('port') + req.url
-    //   );
-    //   res.redirect(307, 'https://' + req.hostname + ":" + app.get('port') + req.url);
-    // }
+    // (req.secure, 'https://' + req.hostname + ":" + app.get('port') + req.url);
+    // return next();
+    if(req.secure) {
+      return next();
+    }
+    else {
+      console.log("redirected to: ", 
+      'https://' + req.hostname + ":" + app.get('port') + req.url
+      );
+      res.redirect(307, 'https://' + req.hostname + ":" + app.get('port') + req.url);
+    }
 });
 
 app.use(session({

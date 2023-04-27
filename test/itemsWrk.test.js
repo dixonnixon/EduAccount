@@ -11,11 +11,24 @@ import { array } from 'yup';
 import pkg from 'winston';
 const { log } = pkg;
 import { isValidObjectId } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
+
+const items = [];
 
 let testEduc;
 let testUser;
 let hardwareCatId;
+let softCatId;
+let storageCatId;
+let inventoryCatId;
+
+var itemFix;
+
+//------ props
+var mbProp;
+var osProp;
+var tableProp;
 
 async function insertEduc() {
     let user = getRandomUser();
@@ -106,11 +119,14 @@ describe('work with items and workplaces',  () => {
 
         const res =  await request(app).post('/workplaces')  
             .set({ Authorization: `Bearer ${token}` })   
-            .send({
-                wpNo: faker.random.numeric(10)
+            .send({  
+                wpNo: faker.random.numeric(10),
+                floor: faker.random.numeric(4),
+                cabinet: faker.random.numeric(39),
             });
 
-        fixWp = res.body;
+        // fixWp = res.body;
+        fixWp = res.body._id;
 
         // console.log("Workplace", res.body);
         expect(res.status).to.equal(200);
@@ -118,7 +134,7 @@ describe('work with items and workplaces',  () => {
         expect(res.body).to.be.an('object');
     });
 
-    it('admin should be able to insert Category for Items', async () => {
+    it('admin should be able to insert Category for Items (except duplicates)', async () => {
         let token = await loginAdmin();
         const res0 =  await request(app).delete('/categories')  
         .set({ Authorization: `Bearer ${token}` }) ;
@@ -152,10 +168,49 @@ describe('work with items and workplaces',  () => {
         expect(res1.status).to.equal(500);
         expect(res1.body).to.be.an('object');
         expect(res1.body.error).is.not.null;
+        
+        const res2 =  await request(app).post('/categories')  
+        .set({ Authorization: `Bearer ${token}` })   
+        .send({
+            name: 'Softweare',
+            cap: "Програмне забезпечення"
+        });
 
+        expect(res2.status).to.equal(200);
+        expect(res2.body).to.be.an('object');
+        expect(res2.body.error).is.not.null;
+
+        softCatId = res2.body._id;
+
+
+        const res3 =  await request(app).post('/categories')  
+        .set({ Authorization: `Bearer ${token}`})   
+        .send({
+            name: 'Storage',
+            cap: "Склад"
+        });
+
+        expect(res3.status).to.equal(200);
+        expect(res3.body).to.be.an('object');
+        expect(res3.body.error).is.not.null;
+
+        storageCatId = res3.body._id;
+
+
+        const res4 =  await request(app).post('/categories')  
+        .set({ Authorization: `Bearer ${token}`})   
+        .send({
+            name: 'Inventory',
+            cap: "Інвентар"
+        });
+
+        expect(res4.status).to.equal(200);
+        expect(res4.body).to.be.an('object');
+        expect(res4.body.error).is.not.null;
+
+        inventoryCatId = res4.body._id;
        
     });
-
 
     it('admin should be able to insert category Props for Items', async () => {
         let token = await loginAdmin();
@@ -170,12 +225,39 @@ describe('work with items and workplaces',  () => {
         expect(res2.status).to.equal(200);
         expect(res2.body).not.to.be.empty;
         expect(isValidObjectId(res2.body._id)).to.equal(true);
+
+        const res3 = await request(app).post('/properties')
+        .set({ Authorization: `Bearer ${token}` })   
+        .send({
+            name: 'OS',
+            cap: "Операційнна система",
+            category: softCatId
+        });
+        expect(res3.status).to.equal(200);
+        expect(res3.body).not.to.be.empty;
+        expect(isValidObjectId(res3.body._id)).to.equal(true);
+
         
+        const res4 = await request(app).post('/properties')
+        .set({ Authorization: `Bearer ${token}` })   
+        .send({
+            name: 'table',
+            cap: "стіл",
+            category: inventoryCatId
+        });
+        expect(res4.status).to.equal(200);
+        expect(res4.body).not.to.be.empty;
+        expect(isValidObjectId(res4.body._id)).to.equal(true);
+
+        
+        mbProp = res2.body._id;
+        osProp = res3.body._id;
+        tableProp = res4.body._id;
     });
 
     it('admin should be able to insert Values for Items', async () => {
         let token = await loginAdmin();
-
+        
        
         
     });
@@ -202,20 +284,89 @@ describe('work with items and workplaces',  () => {
     3. insert Value
 
     */
-    it('Admin user should insert Item with KeyValues', async () => {
-        // console.log("KV", fixWp);
-       
-
-
+    it('Admin user should create empty Item without (without values)', async () => {
         let token = await loginAdmin();
-
         let req = await request(app).post('/items')
             .set({ Authorization: `Bearer ${token}`})
             
             .send({
-                
+                name: 'Andrii comp Х',
+                cap: 'Компьютер Андрія №х',
+                workplace: fixWp
             });
 
+        console.log(req.body);
+        itemFix = req.body._id;
+
+        let req1 = await request(app).post('/items')
+            .set({ Authorization: `Bearer ${token}`})
+            
+            .send({
+                name: 'Ludmila comp Х',
+                cap: 'Компьютер Людмили №х1',
+                workplace: fixWp
+            });
+
+        items.push(req1.body._id);
+
+        console.log(req1.body);
+    });
+
+    it('Admin user should update value/prop into item', async () => {
+        let token = await loginAdmin();
+
+        const newValueMb = {
+            item: itemFix,
+            name: 'Vendor',
+            cap: 'Виробник',
+            property: mbProp,
+            value: 'Asus'
+        };
+        
+        const newValueOs = {
+            item: itemFix,
+            name: 'architechture',
+            cap: 'Архітектура',
+            property: osProp,
+            value: 'x86'
+        };
+
+        const newValueColor = {
+            item: itemFix,
+            name: 'color',
+            cap: 'Колір',
+            property: tableProp,
+            value: 'жовтий'
+        };
+
+        let req = await request(app).patch('/items/' + itemFix)
+        .set({ Authorization: `Bearer ${token}`})
+        .send({
+            values: [newValueMb, newValueOs, newValueColor]
+        });
+
+        expect(req.status).to.equal(200);
+        expect(req.body.values.length).to.equal(3);
+
+        // console.log(req.body);
+    });
+
+
+
+    it('Admin  should add items to Workplace (prevents same items?)', async () => {
+        let token = await loginAdmin();
+        // let anotherItem = Object.assign({}, itemFix);
+        // anotherItem._id = ObjectId;
+
+        console.log("ano", itemFix);
+        const res =  await request(app).patch('/workplaces/' + fixWp)  
+            .set({ Authorization: `Bearer ${token}` })   
+            .send({
+                items: [itemFix, itemFix, items[0], items[0]]
+            });
+
+        console.log("Items assigned", res.body);
+        console.log("values Items ", res.body.items[0].values);
     });
 
     it("Educators should be able to insert the items in their Workplaces", async () => {
@@ -231,11 +382,13 @@ describe('work with items and workplaces',  () => {
         let r  = await request(app).delete('/educators')  
             .set({ Authorization: `Bearer ${token}` }).send();
 
-        // console.log(r.body)
-        r = await request(app).delete('/workplaces')  
-            .set({ Authorization: `Bearer ${token}` }).send();
+        console.log(r.body)
+        // r = await request(app).delete('/workplaces')  
+        //     .set({ Authorization: `Bearer ${token}` }).send();
 
-        // console.log(r.body)
+        r = await request(app).delete('/items/' + itemFix)  
+            .set({ Authorization: `Bearer ${token}` }).send();
+        console.log(r.body)
     });
     
 });
