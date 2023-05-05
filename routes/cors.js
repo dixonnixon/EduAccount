@@ -7,7 +7,8 @@ const whitelist = [
     'https://localhost:443',
     'http://localhost:3005',
     'https://localhost',
-    'https://confusionserver-da545.web.app/'
+    'https://confusionserver-da545.web.app/',
+    'http://10.1.0.16:5173'
 ];
 let corsOptionsDelegate = (req, callback) => {
     let corsOptions;
