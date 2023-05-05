@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, file.originalname)
     }
 });
-
+//change
 const imageFileFilter = (req, file, cb) => {
     // if(!file.originalname.match(/\.(jpg|jpeg|png|gif|csv)$/)) {
     if(!file.originalname.match(/\.(csv)$/)) {
