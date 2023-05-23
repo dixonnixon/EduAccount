@@ -16,6 +16,7 @@ class UsersService {
             permissionFlags: 1
         });
         await user.save();
+        // res.statusCode = 400;
         res.json({ id: user._id });
     }
 }

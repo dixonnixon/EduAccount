@@ -15,4 +15,10 @@ let Workplace = new Schema({
 }, { id: false, timestamps: true });
 
 
+Workplace.virtual('wpnumber')
+    .get(function () {
+        return this.wpNo + this.floor + this.cabinet;
+    })
+
+
 export default mongoose.model("Workplace", Workplace);

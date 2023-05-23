@@ -3,13 +3,13 @@ curl --request POST 'https://10.1.0.16:443/users/signup' \
 --header 'Content-Type: application/json' \
 --cacert 'bin/cert.pem' \
 --data-raw '{
-    "password":"su",
-    "username": "su",
+    "password":"superGu@rd2305",
+    "username": "superUser",
     "email":"reader@gmail.com"
 }'
 
 
-###
+###----------------TEst Env
 
 
 curl --request POST 'localhost:443/users/login' \
@@ -19,8 +19,9 @@ curl --request POST 'localhost:443/users/login' \
     "username": "nickname"
 }'
 
-curl --request POST 'localhost:443/users/login' \
+curl --request POST 'https://10.1.0.16:443/users/login' \
 --header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
 --data-raw '{
     "password":"su",
     "username": "su"
@@ -85,3 +86,138 @@ curl --request POST 'localhost:8080/addresses' \
     "street": [{ "name": "Prokofieva", "buildNo": "34" } ],
     "postIndex": "40016"
 }'
+
+
+curl --request POST 'localhost:8080/addresses' \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{ 
+    "city": "Sumy",
+    "street": [{ "name": "Prokofieva", "buildNo": "34" } ],
+    "postIndex": "40016"
+}'
+
+###new admin ------------------------------- prod!
+curl --request POST 'https://10.1.0.16:443/users/signup' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--data-raw '{
+    "password":"superGu@rd2305",
+    "username": "superUser",
+    "email":"reader@gmail.com"
+}'
+
+curl --request POST 'https://10.1.0.16:443/users/login' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--data-raw '{
+    "password":"superGu@rd2305",
+    "username": "superUser"
+}'
+
+curl --request GET 'https://10.1.0.16:443/properties/name/CPU_Name' \
+--cacert 'bin/cert.pem' 
+
+curl --request GET 'https://10.1.0.16:443/properties/name/MAC_Address' \
+--cacert 'bin/cert.pem' 
+
+curl --request GET 'https://10.1.0.16:443/categories/name/Hardware' \
+--cacert 'bin/cert.pem' 
+
+
+curl --request POST 'https://10.1.0.16:443/categories' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{ 
+    "name": "Hardware",
+    "cap": "Обладняння"
+}'
+
+
+curl --request POST 'https://10.1.0.16:443/categories' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{ 
+    "name": "Software",
+    "cap": "Програмне забезпечення"
+}'
+
+### {"name":"software","cap":"Програмне забезпечення","_id":"646cab06496017678484dcf1","__v":0}
+### {"name":"hardware","cap":"Обладняння","_id":"646caae3496017678484dcee","__v":0}
+            name: 'Motherboard',
+            cap: "Материнська Плата",
+            category: hardwareCatId
+###Props^
+curl --request POST 'https://10.1.0.16:443/properties' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '{ 
+    "name": "CPU_Name",
+    "cap": "Процесор",
+    "category": "646caae3496017678484dcee"
+}'
+
+#Insert Multiple Hardware Properties
+
+curl --request POST 'https://10.1.0.16:443/properties' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '[{ 
+    "name": "CPU_Name",
+    "cap": "Процесор",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "TotalMemory_GB",
+    "cap": "ОЗП",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "OS_Name",
+    "cap": "ОС",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "OS_Version",
+    "cap": "версія ОС",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "IP_Address_v4",
+    "cap": "адреса ipv4",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "IP_Address_v6",
+    "cap": "адреса ipv6",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "ServiceName",
+    "cap": "Мережевий адаптер",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "MAC_Address",
+    "cap": "адреса MAC",
+    "category": "646caae3496017678484dcee"
+}, { 
+    "name": "Loc",
+    "cap": "Розташування",
+    "category": "646caae3496017678484dcee"
+}
+]'
+
+
+#Insert Multiple Software Properties
+
+curl --request POST 'https://10.1.0.16:443/properties' \
+--header 'Content-Type: application/json' \
+--cacert 'bin/cert.pem' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--data-raw '[{ 
+    "name": "Version",
+    "cap": "Версія",
+    "category": "646cab06496017678484dcf1"
+}, { 
+    "name": "Name",
+    "cap": "Назва",
+    "category": "646cab06496017678484dcf1"
+}]'

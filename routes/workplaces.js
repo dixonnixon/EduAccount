@@ -39,25 +39,30 @@ router.route('/')
         res.json(resp);
     }, (err) => next(err));
   })
-  .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, async (req, res, next) => {
     const { body } = req;
     body.user = req.user._id;
     console.log("addr wrk", req.user._id);
-    //---------------------------------vaidate :TODO later
-    // try {
-    //     const errorVal = registerEducatorsSchema.validateSync(body,
-    //         { abortEarly: false, stripUnknown: true }
-    //     );
-    // } catch (e) {
-    //     const error = e ;
-    //     console.log(e);
-    //     return res.status(422).json({ errors: error.errors });
-    // }
-     //---------------------------------vaidate
-      let wp = new Workplace(body);
-      wp.save()
+
+    //if wp already exists
+    const exists = await Workplace.findOne(body)
+    console.log(exists);
+    if(exists) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      // let err = new Error("FAvorites not Exists!");
+      // err.status = 403;
+       
+      // return next(err);
+      return res.json({"exists": true, "status": "workplace already exists!"}); 
+    }
+
+    let wp = new Workplace(body);
+    wp.save()
       .then((wp) => {
-          console.log("Workplace created", wp);
+          console.log("Workplace created", wp, wp.wpnumber);
+
+          
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.json(wp);
@@ -87,5 +92,37 @@ router.route('/:workplaceId')
         }
     })
     
+  })
+  .get(cors.cors, async (req,res,next) => {
+    const Wp = await Workplace.findById(req.params.workplaceId).populate('items');
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(Wp);
+  })
+
+router.route('/wpnumber/:wpnumber')
+  .options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+  .get(cors.cors, async (req,res,next) => {
+    let struct = req.params.wpnumber.split("_");
+    let wpNum = {
+        wpNo: struct[2],
+        floor: struct[1],
+        cabinet: struct[0]
+    };
+    const Wp = await Workplace.findOne(wpNum);
+    if(!Wp) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      // let err = new Error("FAvorites not Exists!");
+      // err.status = 403;
+       
+      // return next(err);
+       return res.json({"exists": false, "status": "workplace absent!"}); 
+
+    }
+    console.log("wpnumber", Wp, wpNum, req.params);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({"exists": true, "status": "workplace exists!", wp: Wp});
   })
 export default router;

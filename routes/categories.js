@@ -54,4 +54,15 @@ router.route('/:catId')
   res.json({text: "can I add value"});
 })
 .get(cors.cors, authenticate.verifyUser, (req, res, next) => {})
+
+
+router.route('/name/:categoryName')
+.options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
+.get(cors.cors, async (req,res,next) => {
+  console.log(req.params.categoryName)
+  const prop = await Category.findOne({name: req.params.categoryName.toLowerCase() });
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.json(prop);
+});
 export default router;

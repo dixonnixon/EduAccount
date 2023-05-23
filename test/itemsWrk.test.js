@@ -128,7 +128,7 @@ describe('work with items and workplaces',  () => {
         // fixWp = res.body;
         fixWp = res.body._id;
 
-        // console.log("Workplace", res.body);
+        console.log("Workplace", res.body);
         expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');
@@ -369,7 +369,20 @@ describe('work with items and workplaces',  () => {
         console.log("values Items ", res.body.items[0].values);
     });
 
-    it("Educators should be able to insert the items in their Workplaces", async () => {
+    it('Admin should be able to fetch all items with props by workspace', async() => {
+        let token = await loginAdmin();
+        const res =  await request(app).get('/workplaces/' + fixWp) 
+            .set({ Authorization: `Bearer ${token}` })   
+
+        expect(res.status).to.equal(200);
+        expect(res.body.items).to.be.an('array');
+
+        res.body.items.forEach((item, i) => {
+            expect(item.values).to.be.an('array');
+        });
+    });
+
+    it("Educators should be able to insert the items in their Workplaces?", async () => {
 
     });
 
