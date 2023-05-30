@@ -11,7 +11,7 @@ let Value = new Schema({
         type: mongoose.Schema.Types.ObjectId, ref: 'Property'
     },
     value: { type: String }
-}, {  timestamps: false });
+}, {  timestamps: false, _id: true });
 
 
 // mongoose.model("Value", Value)

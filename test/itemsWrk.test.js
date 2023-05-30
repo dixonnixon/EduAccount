@@ -351,6 +351,49 @@ describe('work with items and workplaces',  () => {
         // console.log(req.body);
     });
 
+    it('Admin user should create empty Item with values', async () => {
+        const newValueMb = {
+            // item: itemFix,
+            name: 'Vendor',
+            cap: 'Виробник',
+            property: mbProp,
+            value: 'Asus'
+        };
+        
+        const newValueOs = {
+            // item: itemFix,
+            name: 'architechture',
+            cap: 'Архітектура',
+            property: osProp,
+            value: 'x86'
+        };
+
+        const newValueColor = {
+            // item: itemFix,
+            name: 'color',
+            cap: 'Колір',
+            property: tableProp,
+            value: 'жовтий'
+        };
+
+
+
+        let token = await loginAdmin();
+        let req = await request(app).post('/items')
+            .set({ Authorization: `Bearer ${token}`})
+            
+            .send({
+                name: 'New Item 1',
+                cap: 'New Item 1',
+                workplace: fixWp,
+                values: [newValueMb, newValueOs, newValueColor]
+            });
+
+        console.log("request Item inserted: ",req.body);
+        // itemFix = req.body._id;
+
+    });
+
 
 
     it('Admin  should add items to Workplace (prevents same items?)', async () => {

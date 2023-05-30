@@ -115,6 +115,10 @@ curl --request POST 'https://10.1.0.16:443/users/login' \
     "username": "superUser"
 }'
 
+curl --request GET 'https://10.1.0.16:443/items/64748667f68d7574998b4db6' \
+--header "Authorization: Bearer $REST_API_EXAMPLE_ACCESS" \
+--cacert 'bin/cert.pem' 
+
 curl --request GET 'https://10.1.0.16:443/properties/name/CPU_Name' \
 --cacert 'bin/cert.pem' 
 
