@@ -27,7 +27,7 @@ router.route('/')
     let cat = new Category(body);
     cat.save()
     .then((category) => {
-        console.log("cat created", category);
+        // console.log("cat created", category);
         log("cat created", category);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');

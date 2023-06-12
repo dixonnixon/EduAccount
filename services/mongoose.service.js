@@ -5,45 +5,6 @@ import config from '../config.js';
 import findConfig from 'find-config';
 import ServerApi from 'mongodb';
 
-
-
-
-function getDbName() {
-    dotenv.config({ path: findConfig('.env') });
-    let DbName;
-    console.log('*********************************************************\r\n\r\n', process.env.NODE_ENV, process.env.DB_NAME);
-
-    if (process.env.NODE_ENV ==='dev') {
-        DbName = `${process.env.DB_NAME}`;
-    }
-    if (process.env.NODE_ENV ==='test') {
-        DbName = `${process.env.DB_NAME}_test`;
-    }
-    if (process.env.NODE_ENV ==='prod') {
-        DbName = `${process.env.DB_NAME}`;
-    }
-    console.log("DbName", DbName);
-    return DbName;
-}
-
-function getUserName() {
-    let userName;
-    console.log('getUserName*********************************************************\r\n\r\n', process.env.DB_NAME, 
-     process.env.NODE_ENV);
-
-    if (process.env.NODE_ENV ==='dev'){
-        userName = 'Admin';
-    }
-    if (process.env.NODE_ENV ==='test'){
-        userName = 'Test';
-    }
-    if (process.env.NODE_ENV ==='prod'){
-        userName = 'Admin';
-    }
-    console.log("userName=", userName);
-    return userName;
-}
-
 const log = debug('app:mongoose-service');
 
 class MongooseService {
@@ -69,12 +30,14 @@ class MongooseService {
     //retry connectivity recurse timeout method
     connectWithRetry = ( ) => {      
         const config = dotenv.config({ path: this.config });
-        console.log('Attempting MongoDB connection (will retry if needed)', getDbName() );
+        // console.log('Attempting MongoDB connection (will retry if needed)', getDbName() );
         let constring = this.connectionString
             .replace('<pwd>', encodeURIComponent(process.env.DB_PASS ))
-            .replace('<usr>', getUserName())
+            // .replace('<usr>', getUserName())
+            .replace('<usr>', process.env.DB_USER)
             // .replace('<serverIp>',  'localhost')
-            .replace('<dbName>', getDbName() );
+            // .replace('<dbName>', getDbName() );
+            .replace('<dbName>', process.env.DB_NAME );
         // console.log(constring);
         mongoose.set('strictQuery', true);
         mongoose

@@ -60,7 +60,7 @@ router.route('/')
     // body.user = req.user._id;
     //It should be done later with update
 
-    console.log("addr usr", req.user._id);
+    // console.log("addr usr", req.user._id);
     //---------------------------------vaidate
     try {
         const errorVal = registerEducatorsSchema.validateSync(body,
@@ -75,7 +75,7 @@ router.route('/')
       let educ = new Educator(body);
       educ.collection.insertOne(educ)
       .then((educ) => {
-          console.log("educ created", educ);
+        //   console.log("educ created", educ);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.json(educ);

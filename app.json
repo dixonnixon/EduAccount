@@ -1,0 +1,37 @@
+{
+    "apps": [
+      {
+        "name"           : "EduAccount",
+        "script"         : "./bin/www.js",
+        "exec_mode"      : "cluster",
+        "instances"      : 1,
+        "env": {
+          "DB_USER"      : "Test",
+          "DB_PASS"      : "AppGu@rd",
+          "PORT"         : 443,
+          "DB_NAME"      : "monitoring_test"
+        },
+        "env_develop": {
+          "NODE_ENV"     : "test",
+          "PORT"         : 443,
+          "DB_USER"      : "Admin",
+          "DB_PASS"      : "AppGu@rd",
+          "DB_NAME"      : "monitoring_test"
+        },
+        "env_production" : {
+          "NODE_ENV"     : "prod",
+          "PORT"         : 443,
+          "DB_USER"      : "Admin",
+          "DB_PASS"      : "AppGu@rd",
+          "DB_NAME"      : "monitoring"
+        },
+        "env_test"       : {
+          "NODE_ENV"     : "test",
+          "PORT"         : 443,
+          "DB_USER"      : "Admin",
+          "DB_PASS"      : "AppGu@rd",
+          "DB_NAME"      : "monitoring_test"
+        }
+      }
+    ]
+  }

@@ -13,9 +13,38 @@ const log = debug('app:users-routes-config');
 
 var router = express.Router();
 router.use(bodyParser.json());
-
+let properties = null;
 log(cors)
 
+async function replacePropertyWithObjectId(body) {
+  /**chnages the name into ID */
+  const newItemId = new ObjectId();
+  if(!properties) {
+    properties = await Property.find({});
+  }
+  
+  body._id = newItemId;
+
+  if(body.values) {
+    body.values = body.values.map((v, i)=> {
+    
+      let newV = null;
+      
+      if(!v.item) {
+        // newV = Object.assign({ item: newItemId}, v);
+        newV = { ... v, item: newItemId };
+      }
+      let lookup = properties.filter((v) => {return v.name.toLowerCase() === newV.property.toLowerCase()});
+      if(lookup.length > 0) {
+        // console.log("VVV", lookup[0]._id, v, newV);
+        newV.property = lookup[0]._id
+      }
+      return newV;
+    })
+  }
+  // console.log("Body repl", body, properties);
+  return body;
+};
 
 router.options('*', cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
 
@@ -26,34 +55,8 @@ router.route('/')
   .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, async (req, res, next) => {
     const { body } = req;
     body.user = req.user._id;
-    console.log("addr usr", req.user._id, body);
 
-    const newItemId = new ObjectId();
-    //replce property name with _id Prop
-    //add item 
-
-    const props = await Property.find({});
-    console.log("ccc", props);
-    
-
-    body._id = newItemId;
-    body.values = body.values.map((v, i)=> {
-      
-      let newV = null;
-      
-      if(!v.item) {
-        // newV = Object.assign({ item: newItemId}, v);
-        newV = { ... v, item: newItemId };
-      }
-      let lookup = props.filter((v) => {return v.name.toLowerCase() === newV.property.toLowerCase()});
-      if(lookup.length > 0) {
-        console.log("VVV", lookup[0]._id, v, newV);
-        newV.property = lookup[0]._id
-      }
-      return newV;
-    })
-
-    //---------------------------------vaidate : TODO later
+     //---------------------------------vaidate : TODO later
     // try {
     //     const errorVal = registerEducatorsSchema.validateSync(body,
     //         { abortEarly: false, stripUnknown: true }
@@ -65,50 +68,35 @@ router.route('/')
     // }
      //---------------------------------vaidate
       // let prop = new Property(body);
-      if(Array.isArray(body)) { //: TODO multiple insertions)))))))))))!!!!!!!!
-        // const inserted = await Item.insertMany(body) // it is idempotent 
-        //   .catch(function(error) {
-        //     console.log(error) // Failure
-        //   });
-        
-        // res.statusCode = 200;
-        // res.setHeader('Content-Type', 'application/json');
-        // res.json({inserted: true, documents: inserted});
-        // return;
+    if(Array.isArray(body)) { //: TODO multiple insertions (multiple Items) )))))))))))!!!!!!!!
+      // const inserted = await Item.insertMany(body, (err) => (err) ? res.json({err: true, reason: err}) : "") // it is idempotent 
+      let newBody = await Promise.all(body.map(async (item, i, items) => {
+        return await replacePropertyWithObjectId(item);
+      }));
+
+      console.log("REEEEEEEplaced", newBody, newBody[0].values);
+      
+      try {
+        console.log(body[0].values);
+        const inserted = await Item.insertMany(newBody) // it is idempotent 
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({inserted: true, documents: inserted});
+        // res.json({error: true, message: "not Implemented"});
+        return;
       }
-
-
-
-      let item = new Item(body);
-
-      // item.values.cursor().
-      // eachAsync(async function (doc, i) {
-      //   doc.foo = doc.bar + i;
-      //   await doc.save();
-      // })
-
-      console.log("created new", item);
-      const saved = await item.save((err) => { if (err) next(err)})
-      console.log("saved", saved);
-      // .then((item) => {
-      //     console.log("item created1", item);
-          
-      // //     item.values = item.values.map((v, i)=> {
-      // //       if(!v.item) {
-      // //         return Object.assign({ item: item._id}, v);
-      // //       }
-      // //     });
-      // //     item.save();
-   
-
-      // //     console.log("updValues ", item.updValues);
-      // //     console.log("item created", item);
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json(item);
-      // }, (err) => next(err));
-
-
+      catch (err) {
+        return next({err, message: "bad items"});
+      }
+    }
+    
+    // let item = new Item(body);
+    let item = new Item(await replacePropertyWithObjectId(body));
+    const saved = await item.save((err) => { if (err) next(err)})
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(item);
   })
   
 ;

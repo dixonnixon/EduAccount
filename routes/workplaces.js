@@ -42,11 +42,11 @@ router.route('/')
   .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, async (req, res, next) => {
     const { body } = req;
     body.user = req.user._id;
-    console.log("addr wrk", req.user._id);
+    // console.log("addr wrk", req.user._id);
 
     //if wp already exists
     const exists = await Workplace.findOne(body)
-    console.log(exists);
+    // console.log(exists);
     if(exists) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -120,7 +120,7 @@ router.route('/wpnumber/:wpnumber')
        return res.json({"exists": false, "status": "workplace absent!"}); 
 
     }
-    console.log("wpnumber", Wp, wpNum, req.params);
+    // console.log("wpnumber", Wp, wpNum, req.params);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json({"exists": true, "status": "workplace exists!", wp: Wp});

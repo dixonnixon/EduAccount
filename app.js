@@ -11,14 +11,9 @@ import passport from "passport";
 import logger from 'morgan';
 import helmet from 'helmet';
 import * as expressWinston from 'express-winston';
-
 import * as winston from 'winston';
 
-
-
-
-
-
+/**routes -----------------------------------------------------*/
 import indexRoute from './routes/index.js';
 import usersRoute from './routes/users.js';
 import addressesRoute from './routes/addresses.js';
@@ -27,9 +22,11 @@ import itemsRoute from './routes/items.js';
 import categoriesRoute from './routes/categories.js';
 import workplacesRoute from './routes/workplaces.js';
 import propsRoute from './routes/props.js';
+/**routes -----------------------------------------------------*/
 
 import debug from 'debug';
-const log = debug('app');
+const log = debug('app:main');
+
 const FileStore = sessionFileStore(session);
 
 const loggerOptions = {
@@ -150,15 +147,17 @@ app.use(function(req, res, next) {
     next(err);
   });
 
-
+console.log(`ENV: ${app.get('env')}`);
+if(app.get('env') !== 'test') app.use(logger('dev'));
   
   // error handler
 app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
+    // set locals, only providing error in test
+    
     res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-  
-    log("ENV", req.app.get('env'));
+    res.locals.error = req.app.get('env') === 'test' ? err : {};
+    
+    console.log("ENV", req.app.get('env'), err, req.body, res.body);
     // render the error page
     res.status(err.status || 500);
     res.json({
@@ -167,8 +166,7 @@ app.use(function(err, req, res, next) {
       });
 });
 
-console.log(`ENV: ${app.get('env')}`);
-if(app.get('env') !== 'test') app.use(logger('dev'));
+
 
   
 export default app;

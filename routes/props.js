@@ -26,7 +26,7 @@ router.route('/')
   .post(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, async (req, res, next) => {
       const { body } = req;
 
-      console.log("Many?", body, typeof body, Array.isArray(body))
+      // console.log("Many?", body, typeof body, Array.isArray(body))
  
       if(Array.isArray(body)) {
         const inserted = await Property.insertMany(body) // it is idempotent 
@@ -44,7 +44,7 @@ router.route('/')
 
       prop.save()
       .then((prop) => {
-          console.log("prop created", prop);
+          // console.log("prop created", prop);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.json(prop);
@@ -61,7 +61,7 @@ router.route('/')
 router.route('/name/:propertyName')
 .options(cors.configureWithOptions, (req, res) => { res.sendStatus(200); })
 .get(cors.cors, async (req,res,next) => {
-  console.log(req.params.propertyName, await Property.find({ name: req.params.propertyName.toLowerCase() }))
+  // console.log(req.params.propertyName, await Property.find({ name: req.params.propertyName.toLowerCase() }))
   const prop = await Property.findOne({name: req.params.propertyName });
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');

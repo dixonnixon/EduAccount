@@ -88,7 +88,7 @@ router.route('/')
     .post(cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         const { body } = req;
 
-        console.log(req.user, req.body, req.body.street);
+        // console.log(req.user, req.body, req.body.street);
         const addrId = new ObjectId();
 
          //---------------------------------vaidate

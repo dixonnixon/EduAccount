@@ -43,7 +43,7 @@ async function insertEduc() {
                 user: user._id,
                 age: 34,
             });
-            // console.log("insertEduc", res.body);
+            // //console.log("insertEduc", res.body);
         expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');
@@ -61,9 +61,9 @@ async function getRandomUser() {
         const res =  await request(app).get('/users')  
             .set({ Authorization: `Bearer ${token}` }).send();
 
-        // console.log("getRandomUser", res.body);
+        // //console.log("getRandomUser", res.body);
         testUser = res.body[Math.floor(Math.random() * res.body.length) + 1];
-        // console.log("testUser", testUser);
+        // //console.log("testUser", testUser);
         return testUser;
     } else return testUser;
 }
@@ -95,7 +95,7 @@ async function loginEduc() { //:TODO extract method
 
 
 describe('work with items and workplaces',  () => {
-    // console.log("NODE_ENV", process.env.NODE_ENV);
+    // //console.log("NODE_ENV", process.env.NODE_ENV);
     basicSetup();  
     const itemData = {  
         name: "",
@@ -112,7 +112,7 @@ describe('work with items and workplaces',  () => {
         let token = await loginAdmin();
 
         // fixEduc  = res.body;
-        // console.log("testEduc!!!!!!!!!", testEduc);
+        // //console.log("testEduc!!!!!!!!!", testEduc);
 
         //make some values
         //make some items
@@ -128,7 +128,7 @@ describe('work with items and workplaces',  () => {
         // fixWp = res.body;
         fixWp = res.body._id;
 
-        console.log("Workplace", res.body);
+        //console.log("Workplace", res.body);
         expect(res.status).to.equal(200);
         expect(res.body).not.to.be.empty;
         expect(res.body).to.be.an('object');
@@ -348,7 +348,7 @@ describe('work with items and workplaces',  () => {
         expect(req.status).to.equal(200);
         expect(req.body.values.length).to.equal(3);
 
-        // console.log(req.body);
+        // //console.log(req.body);
     });
 
     it('Admin user should create empty Item with values', async () => {
@@ -389,7 +389,7 @@ describe('work with items and workplaces',  () => {
                 values: [newValueMb, newValueOs, newValueColor]
             });
 
-        console.log("request Item inserted: ",req.body);
+        //console.log("request Item inserted: ",req.body);
         // itemFix = req.body._id;
 
     });
@@ -401,15 +401,15 @@ describe('work with items and workplaces',  () => {
         // let anotherItem = Object.assign({}, itemFix);
         // anotherItem._id = ObjectId;
 
-        console.log("ano", itemFix);
+        //console.log("ano", itemFix);
         const res =  await request(app).patch('/workplaces/' + fixWp)  
             .set({ Authorization: `Bearer ${token}` })   
             .send({
                 items: [itemFix, itemFix, items[0], items[0]]
             });
 
-        console.log("Items assigned", res.body);
-        console.log("values Items ", res.body.items[0].values);
+        //console.log("Items assigned", res.body);
+        //console.log("values Items ", res.body.items[0].values);
     });
 
     it('Admin should be able to fetch all items with props by workspace', async() => {
@@ -438,13 +438,13 @@ describe('work with items and workplaces',  () => {
         let r  = await request(app).delete('/educators')  
             .set({ Authorization: `Bearer ${token}` }).send();
 
-        console.log(r.body)
+        //console.log(r.body)
         // r = await request(app).delete('/workplaces')  
         //     .set({ Authorization: `Bearer ${token}` }).send();
 
         r = await request(app).delete('/items/' + itemFix)  
             .set({ Authorization: `Bearer ${token}` }).send();
-        console.log(r.body)
+        //console.log(r.body)
     });
     
 });
