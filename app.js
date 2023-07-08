@@ -1,4 +1,4 @@
-import  express from 'express';
+import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit'
@@ -10,6 +10,15 @@ import sessionFileStore  from 'session-file-store';
 import passport from "passport";
 import logger from 'morgan';
 import helmet from 'helmet';
+import Boom from '@hapi/boom';
+import finalhandler from 'finalhandler';
+//TODO: use compression
+//TODO: ?segregate code app.use into one main module like here  https://github.com/dhruv479/node/blob/master/middlewares/app.middleware.js
+//is it worth it?
+
+import config from './config.js';
+const isDev = config.keys.isDev;
+
 import * as expressWinston from 'express-winston';
 import * as winston from 'winston';
 
@@ -46,9 +55,6 @@ if (!process.env.DEBUG) {
 }
 
 
-
-
-
 const dotenvResult = dotenv.config();
 if (dotenvResult.error) {
     throw dotenvResult.error;
@@ -78,9 +84,6 @@ function normalizePort(val) {
   }
 
 const port = normalizePort(process.env.PORT || '3000' );
-
-
-
 
 
 const app = express();
@@ -142,9 +145,10 @@ app.use('/categories', categoriesRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+    // var err = new Error('Not Found');
+    // err.status = 404;
+    // next(err);
+    return next(Boom.notFound('URL not found! You are not expexted to be here! Get Out please)'))
   });
 
 console.log(`ENV: ${app.get('env')}`);
@@ -153,17 +157,35 @@ if(app.get('env') !== 'test') app.use(logger('dev'));
   // error handler
 app.use(function(err, req, res, next) {
     // set locals, only providing error in test
+    // res.locals.message = err.message;
+    // res.locals.error = req.app.get('env') === 'test' ? err : {};
+
+
     
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'test' ? err : {};
-    
-    console.log("ENV", req.app.get('env'), err, req.body, res.body);
-    // render the error page
-    res.status(err.status || 500);
-    res.json({
-        message: err.message,
-        error: err
+    // console.log("ENV", req.app.get('env'), err, req.body, res.body);
+    // // render the error page
+    // res.status(err.status || 500);
+    // res.json({
+    //     message: err.message,
+    //     error: err
+    //   });
+
+    let done = finalhandler(req, res)
+    if(err) return done(err);
+
+    const { message = 'Oops! Something went wrong', isBoom, output } = err;
+    if (isDev) console.log(err);
+    if (isBoom) {
+      return res.status(output.statusCode).json({
+        message,
+        success: false,
       });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Oops! Something went wrong',
+    });
 });
 
 

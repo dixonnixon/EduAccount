@@ -25,7 +25,7 @@ describe('POST: /save route to insert data', () => {
 
     
 
-    it('should allow a POST to /users', async function () {
+    it('should allow a POST to /users/signup to register user', async function () {
         // const a0 = await request(app).post('/users/signup').send({
         //     "username": "nickname", 
         //     "password":"secret12345",
@@ -33,13 +33,12 @@ describe('POST: /save route to insert data', () => {
         //     "admin": true
         // });
         const a0 = await request(app).post('/users/signup').send(firstUserBody);
-
+        firstUserIdTest = a0.body._id;
 
         const a = await request(app).post('/users/login').send({
             "username": "su", 
             "password":"su",
         });
-
         accessToken = a.body.token;
     });
 
@@ -49,14 +48,23 @@ describe('POST: /save route to insert data', () => {
         .set({ Authorization: `Bearer ${accessToken}` })    
         .send(firstUserBody);
 
-
-
         expect(res.status).to.equal(400);
         expect(res.body.errors[0].msg).to.equal('E-mail already in use');
         expect(res.body).not.to.be.empty;
-        expect(res.body).to.be.an('object');;
+        expect(res.body).to.be.an('object');
 
-        firstUserIdTest = res.body.id;
+        firstUserIdTest = res.body._id;
+    });
+
+    it('created user should be deleted by admin ', async function() {
+        let reqUser = await request(app).get(`/users/email/${encodeURIComponent(firstUserBody.email)}`)
+        .set({ Authorization: `Bearer ${accessToken}` })
+
+        const res =  await request(app).delete(`/users/${reqUser.body._id}`)  
+            .set({ Authorization: `Bearer ${accessToken}` });
+        
+        expect(res.body.acknowledged).to.equal(true);
+        expect(res.body.deletedCount).to.equal(1);
     });
 
 });

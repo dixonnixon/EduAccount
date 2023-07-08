@@ -1,8 +1,21 @@
-import { MongoClient } from  'mongodb';
+import { MongoClient, ServerApiVersion  } from  'mongodb';
+import config from '../config.js';
+
+
+const conf = dotenv.config()
+
+
+const credentials = conf.parsed.CERT_WIN;
+
 
 // Connection URL
-const url = 'mongodb://Test:' + encodeURIComponent('AppGu@rd') + '@localhost:27017';
-const client = new MongoClient(url);
+// const url = 'mongodb://Test:' + encodeURIComponent('AppGu@rd') + '@localhost:27017';
+const url = config.mongoUrl;
+const client = new MongoClient(url, {
+  sslKey: credentials,
+  sslCert: credentials,
+  serverApi: ServerApiVersion.v1
+});
 
 // Database Name
 const dbName = 'monitoring_test';

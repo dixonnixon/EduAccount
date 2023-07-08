@@ -7,20 +7,29 @@ import ServerApi from 'mongodb';
 
 const log = debug('app:mongoose-service');
 
+// const credentials = process.env.CERT_WIN;
+const credentials = dotenv.config().parsed.CERT_WIN;
+
+console.log("credentials", credentials, );
+
+
 class MongooseService {
      count = 0;
      mongooseOptions = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000,
-        serverApi: ServerApi.v1
+        serverApi: ServerApi.v1,
+        sslKey: credentials,
+        sslCert: credentials,
+        ssl: true,
+        authMechanism: 'MONGODB-X509'
     };
 
     constructor(dbName) {
         this.config = findConfig('.env');
         this.connectionString = config.mongoUrl;
         this.connectWithRetry(dbName);
-
     }
 
     getMongoose() {
@@ -30,18 +39,11 @@ class MongooseService {
     //retry connectivity recurse timeout method
     connectWithRetry = ( ) => {      
         const config = dotenv.config({ path: this.config });
-        // console.log('Attempting MongoDB connection (will retry if needed)', getDbName() );
-        let constring = this.connectionString
-            .replace('<pwd>', encodeURIComponent(process.env.DB_PASS ))
-            // .replace('<usr>', getUserName())
-            .replace('<usr>', process.env.DB_USER)
-            // .replace('<serverIp>',  'localhost')
-            // .replace('<dbName>', getDbName() );
-            .replace('<dbName>', process.env.DB_NAME );
+        
         // console.log(constring);
         mongoose.set('strictQuery', true);
         mongoose
-            .connect(constring, this.mongooseOptions)
+            .connect(this.connectionString, this.mongooseOptions)
             .then((res) => {
                 log(res, 'MongoDB is connected');
             })

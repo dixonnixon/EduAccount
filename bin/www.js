@@ -10,7 +10,7 @@ import fs from 'fs';
 // import http from 'http'; 
 import https from 'https'; 
 import serveStatic from 'serve-static';
-import finalhandler from 'finalhandler';
+
 // import https from 'https';
 import path  from'path';
 import { fileURLToPath } from 'url';
@@ -43,14 +43,14 @@ app.set('port', port);
   /**
    * static
    */
-  function setHeaders (res, path) {
-    res.setHeader('Content-Disposition', contentDisposition(path))
-  }
+  // function setHeaders (res, path) {
+  //   res.setHeader('Content-Disposition', contentDisposition(path))
+  // }
 
-  var serve = serveStatic('public/scripts', {
-    index: false,
-    setHeaders: setHeaders
-  });
+  // var serve = serveStatic('public/scripts', {
+  //   index: false,
+  //   setHeaders: setHeaders
+  // });
 
   // app.use('/scripts', express.static(path.join(__dirname, 'public/scripts')))
   // app.use(express.static(path.join(__dirname, 'public', 'css')));
@@ -63,7 +63,13 @@ app.set('port', port);
 // var server = https.createServer(options, app);
 var server = https.createServer({
   key: fs.readFileSync(__dirname + "/cert.key"),
-  cert: fs.readFileSync(__dirname + "/cert.pem")},app);
+  cert: fs.readFileSync(__dirname + "/cert.pem")}, 
+  // (req, res) => {
+  //   var done = finalhandler(req, res);
+
+
+  // },
+app);
 
 /**
  * Listen on provided port, on all network interfaces.

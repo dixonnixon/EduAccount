@@ -48,6 +48,20 @@ router
   })
   .catch((err) => next(err));
 })
+  .get('/email/:email', authenticate.verifyUser, authenticate.verifyAdmin, 
+    async (req, res, next) => {
+      // let acceptByEmail = req.query.getByEmail;
+      // console.log("acceptByEmail", acceptByEmail)
+      // if(acceptByEmail) {
+        let user = await User.findOne({email: req.params.email});
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(user);
+      // }
+
+    })
+
+
   .post("/", cors.cors, authenticate.verifyUser, authenticate.verifyAdmin,
     body('email').custom(UsersMiddleware.isValidUser),
     body('email').isEmail(),
@@ -58,6 +72,14 @@ router
     BodyValidationMiddleware.verifyBodyFieldsErrors,
     UsersService.createUser
   )
+  .delete("/:userId", cors.configureWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, 
+    async (req, res, next) => {
+  
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json(await UsersService.delete(req.params.userId));
+
+  })
 ;
 
 router
@@ -65,7 +87,7 @@ router
     // // console.log("signing UP...");
     User.register(new User({email: req.body.email, username: req.body.username}), req.body.password, 
       (err, user) => {
-        // console.log("register", user, (user != null))
+        console.log("register", user, req.user, req.params, req.headers, req.body, (user != null))
         if(err) {
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');

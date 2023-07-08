@@ -14,6 +14,8 @@ async function login() {
         "username": "su", 
         "password":"su",
     });
+
+    console.log(a.body);
     return a.body.token;
 }
 
